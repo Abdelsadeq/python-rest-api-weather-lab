@@ -1,6 +1,5 @@
 
 import os
-
 import requests
 from dotenv import load_dotenv
 
@@ -26,18 +25,18 @@ class WeatherData:
 
     def display_summary(self):
         """Print a formatted weather summary."""
-        print("\n" + "=" * 35)
-        print("       WEATHER SUMMARY")
-        print("=" * 35)
+        print("\n" + "=" * 40)
+        print("           WEATHER SUMMARY")
+        print("=" * 40)
         print(f"City        : {self.city}")
         print(f"Temperature : {self.temperature} °C")
         print(f"Humidity    : {self.humidity}%")
         print(f"Conditions  : {self.description.title()}")
-        print("=" * 35)
+        print("=" * 40)
 
 
 def fetch_weather(city_name, api_key):
-    """Retrieve and parse weather information from OpenWeatherMap."""
+    """Retrieve weather information from OpenWeatherMap."""
 
     url = "https://api.openweathermap.org/data/2.5/weather"
 
@@ -55,6 +54,21 @@ def fetch_weather(city_name, api_key):
     return WeatherData.from_json(data)
 
 
+def display_menu(countries):
+    """Display the available countries."""
+
+    print("\n" + "=" * 40)
+    print("           WEATHER API CLIENT")
+    print("=" * 40)
+    print("Select a country to check the weather:\n")
+
+    for number, (country, city) in enumerate(countries, start=1):
+        print(f"  {number}. {country:<18} ({city.split(',')[0]})")
+
+    print("\n  Type any letter to exit.")
+    print("=" * 40)
+
+
 def main():
     load_dotenv()
 
@@ -64,16 +78,55 @@ def main():
         print("Error: Configure OPENWEATHER_API_KEY in .env")
         return
 
-    try:
-        weather = fetch_weather("Cairo,EG", api_key)
-        weather.display_summary()
+    countries = {
+        "Egypt": "Cairo,EG",
+        "Saudi Arabia": "Riyadh,SA",
+        "United Kingdom": "London,GB",
+        "France": "Paris,FR",
+        "Japan": "Tokyo,JP",
+        "United States": "New York,US"
+    }
 
-    except requests.exceptions.RequestException as error:
-        print(f"API request failed: {type(error).__name__}")
-        print("Check your connection, API key and API access.")
+    country_list = list(countries.items())
 
-    except (KeyError, IndexError, TypeError, ValueError) as error:
-        print(f"Invalid weather data: {error}")
+    while True:
+        display_menu(country_list)
+
+        choice = input("\nEnter your choice (1-6): ").strip()
+
+        # Any letter exits the program
+        if choice.isalpha():
+            print("\nThank you for using Weather API Client!")
+            print("Goodbye!\n")
+            break
+
+        # Validate the numeric input
+        if not choice.isdigit():
+            print("\nInvalid input! Enter 1-6 or a letter to exit.")
+            continue
+
+        choice_number = int(choice)
+
+        if choice_number < 1 or choice_number > len(country_list):
+            print("\nInvalid number! Please select 1 to 6.")
+            continue
+
+        # Get the selected country and city
+        country, city = country_list[choice_number - 1]
+
+        print(f"\nFetching weather for {country}...")
+
+        try:
+            weather = fetch_weather(city, api_key)
+            weather.display_summary()
+
+        except requests.exceptions.RequestException as error:
+            print(f"\nAPI request failed: {type(error).__name__}")
+
+        except (KeyError, IndexError, TypeError, ValueError) as error:
+            print(f"\nInvalid weather data: {error}")
+
+        input("\nPress Enter to return to the menu...")
 
 
 if __name__ == "__main__":
