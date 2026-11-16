@@ -105,7 +105,17 @@ Run the JSON parsing and class tests:
 - The virtual environment is not included in the
   source-code submission.
 
+  ## Screenshots
+
+### Weather API Output
+![Weather API Output (Sample 01)](screenshots/01-weather-output.png)
+
+![Weather API Output (Sample 02)](screenshots/02-weather-output.png)
+
+### Class Testing
+![Tests Passed](screenshots/03-tests-passed.png)
+
 ### Author
 
-Student: Abdelsadeq Khamis Abdelsadeq
+Abdelsadeq Khamis Abdelsadeq
 
